@@ -25,15 +25,15 @@
       
       <div class="grid grid-cols-3 gap-6">
         <button class="browser-btn browser-card flex flex-col items-center justify-center p-6 border-2 border-[var(--border-color)] rounded-lg hover:border-[var(--primary)] hover:bg-[var(--bg-secondary)] transition cursor-pointer relative" data-browser="chrome">
-          <div class="text-4xl mb-3">🌐</div>
+          <img src="assets/google-chrome-icon.png" alt="Google Chrome" class="w-12 h-12 mb-3">
           <div class="font-semibold" data-i18n="browserSelect.chrome">Google Chrome</div>
         </button>
         <button class="browser-btn browser-card flex flex-col items-center justify-center p-6 border-2 border-[var(--border-color)] rounded-lg hover:border-[var(--primary)] hover:bg-[var(--bg-secondary)] transition cursor-pointer relative" data-browser="edge">
-          <div class="text-4xl mb-3">🌊</div>
+          <img src="assets/microsoft-edge-icon.png" alt="Microsoft Edge" class="w-12 h-12 mb-3">
           <div class="font-semibold" data-i18n="browserSelect.edge">Microsoft Edge</div>
         </button>
         <button class="browser-btn browser-card flex flex-col items-center justify-center p-6 border-2 border-[var(--border-color)] rounded-lg hover:border-[var(--primary)] hover:bg-[var(--bg-secondary)] transition cursor-pointer relative" data-browser="brave">
-          <div class="text-4xl mb-3">🦁</div>
+          <img src="assets/brave-browser-icon.png" alt="Brave Browser" class="w-12 h-12 mb-3">
           <div class="font-semibold" data-i18n="browserSelect.brave">Brave Browser</div>
         </button>
       </div>
@@ -61,14 +61,14 @@
       <div class="flex justify-center mb-6">
         <div class="loader"></div>
       </div>
-      <h2 id="loading-title" class="text-2xl font-bold mb-2">Capturing Slides...</h2>
-      <p id="loading-status" class="text-[var(--text-muted)]">Initializing browser session...</p>
+      <h2 id="loading-title" class="text-2xl font-bold mb-2" data-i18n="status.loadingSlides">Capturing Slides...</h2>
+      <p id="loading-status" class="text-[var(--text-muted)]" data-i18n="status.searchingBrowser">Initializing browser session...</p>
     </div>
 
     <!-- Screen 4: Directory Selection / Transfer -->
     <div id="screen-4" class="screen text-center py-8">
       <h2 class="text-2xl font-bold mb-4" data-i18n="status.complete">Capture Complete!</h2>
-      <p class="text-[var(--text-muted)] mb-8">Select a destination folder to save your slides.</p>
+      <p class="text-[var(--text-muted)] mb-8" data-i18n="status.selectDestination">Select a destination folder to save your slides.</p>
 
       <div class="text-left max-w-lg mx-auto mb-6">
         <label for="folder-name-input" class="block text-sm font-semibold mb-2 text-[var(--text-muted)]" data-i18n="folderName.label">Folder/File name</label>
@@ -89,7 +89,7 @@
         <div id="download-mode-error" class="error-box mt-4 hidden" data-i18n="errors.selectDownloadMode"></div>
       </div>
       
-      <button id="btn-select-dir" class="bg-[var(--primary)] text-white font-semibold py-3 px-8 rounded-lg hover:bg-[var(--primary-hover)] transition mb-4 cursor-pointer">
+      <button id="btn-select-dir" class="bg-[var(--primary)] text-white font-semibold py-3 px-8 rounded-lg hover:bg-[var(--primary-hover)] transition mb-4 cursor-pointer" data-i18n="folderName.btnSelectDir">
         Choose Destination Folder
       </button>
 
@@ -101,10 +101,10 @@
     <!-- Screen 5: Success -->
     <div id="screen-5" class="screen text-center py-12">
       <div class="text-6xl mb-6">🎉</div>
-      <h2 class="text-2xl font-bold mb-2">Success!</h2>
-      <p class="text-[var(--text-muted)] mb-8">Your slides have been saved successfully.</p>
+      <h2 class="text-2xl font-bold mb-2" data-i18n="status.successTitle">Success!</h2>
+      <p class="text-[var(--text-muted)] mb-8" data-i18n="status.successSubtitle">Your slides have been saved successfully.</p>
       
-      <button id="btn-reset" class="bg-[var(--bg-secondary)] text-[var(--text-main)] font-semibold py-3 px-8 rounded-lg hover:bg-[var(--border-color)] transition cursor-pointer">
+      <button id="btn-reset" class="bg-[var(--bg-secondary)] text-[var(--text-main)] font-semibold py-3 px-8 rounded-lg hover:bg-[var(--border-color)] transition cursor-pointer" data-i18n="status.downloadAnother">
         Download Another
       </button>
     </div>

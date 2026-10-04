@@ -47,6 +47,8 @@ async function createPdfFromImages(imagePaths, outputPath) {
 }
 
 function setupIpcHandlers(mainWindow, updateManager) {
+  ipcMain.handle('app:get-version', () => require('electron').app.getVersion());
+
   ipcMain.handle('updates:check', async () => {
     try {
       return await updateManager.checkForUpdates();
@@ -142,8 +144,14 @@ function setupIpcHandlers(mainWindow, updateManager) {
       }
 
       const targetFolderName = sanitizeNameSegment(folderName, formatDefaultFolderName());
-      const finalDestinationPath = path.join(destinationPath, targetFolderName);
-      await fs.ensureDir(finalDestinationPath);
+      let finalDestinationPath;
+      
+      if (!downloadImages && downloadPdf) {
+        finalDestinationPath = destinationPath;
+      } else {
+        finalDestinationPath = path.join(destinationPath, targetFolderName);
+        await fs.ensureDir(finalDestinationPath);
+      }
       
       const files = (await fs.readdir(currentTempFolder)).sort();
       const imageFiles = files.filter((file) => /\.(png|jpe?g)$/i.test(file));

@@ -56,6 +56,25 @@ The application simplifies a complex automation flow into 5 easy steps:
 
 ---
 
+## ⚠️ Important Usage Guidelines
+
+### 🛑 What NOT to Do During Capture
+When the program is actively extracting slides, it will launch a temporary, automated browser window to view and screenshot the presentation page by page. 
+**During this process, do NOT click, scroll, or interact with the automated browser window.**
+Doing so will interfere with the script's ability to transition slides and capture accurate screenshots, which may result in duplicated, skipped, or misaligned images. Just sit back and let the automation finish!
+
+*(Note: The program is "page-aware", meaning it intelligently tracks the URL slide IDs to ignore duplicate captures caused by slide animations. It will wait and only save the final visual state of each slide. However, manual interference can still disrupt the workflow.)*
+
+### ✅ Troubleshooting: "No Access" Errors
+Sometimes, you might be able to open a Google Slide manually on your computer, but when the program launches its automated browser, it gets an access error (e.g., "You need access" or "File does not exist").
+
+**What to do if this happens:**
+- **Check your Browser Profiles:** The automated script hooks into your browser's default profile environment. Make sure that the browser you selected in the app's browser selector (Chrome, Edge, or Brave) is actively logged into a Google account that has permission to view the slides.
+- **Switch Browsers:** If your primary Google account is on Chrome but you selected Edge in the app, the automated Edge window won't have your Chrome login session. Either select Chrome in the app, or log into your Google account on Edge first.
+- **Link Visibility:** If you are not the owner of the presentation, ask the owner to change the sharing permissions to "Anyone with the link can view" to bypass authentication entirely.
+
+---
+
 ## ⚙️ Settings & Customization
 
 Click the **Settings (⚙️)** gear icon in the top-right corner of the application to customize your experience. The app uses local storage to remember your preferences:

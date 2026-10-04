@@ -20,7 +20,8 @@
   },
   "folderName": {
     "label": "Nama folder/file",
-    "placeholder": "GoogleSlide"
+    "placeholder": "GoogleSlide",
+    "btnSelectDir": "Pilih Folder Tujuan"
   },
   "downloadModes": {
     "images": "Unduh sebagai Gambar",
@@ -31,7 +32,11 @@
     "loadingSlides": "Merekam slide...",
     "capturing": "Merekam slide {current} dari {total}...",
     "saving": "Memindahkan slide ke folder tujuan...",
-    "complete": "Pengunduhan selesai!"
+    "complete": "Pengunduhan selesai!",
+    "selectDestination": "Pilih folder tujuan untuk menyimpan slide Anda.",
+    "successTitle": "Berhasil!",
+    "successSubtitle": "Slide Anda telah berhasil disimpan.",
+    "downloadAnother": "Unduh Lainnya"
   },
   "updateCheck": {
     "loadingTitle": "Memeriksa pembaruan...",
@@ -42,7 +47,8 @@
     "downloadingStatus": "Mohon tunggu saat aplikasi mengunduh pembaruan.",
     "downloadProgress": "Mengunduh pembaruan... {percent}% ({transferred} MB / {total} MB)",
     "noUpdate": "Anda sudah menggunakan versi terbaru.",
-    "errorFallback": "Tidak dapat memeriksa pembaruan saat ini."
+    "errorFallback": "Tidak dapat memeriksa pembaruan saat ini.",
+    "downloadError": "Paket pembaruan tidak dapat diunduh. Pastikan rilis GitHub berisi installer dan blockmap asset untuk versi ini."
   },
   "updatePrompt": {
     "title": "Apakah Anda ingin memperbarui aplikasi sekarang?",
@@ -76,6 +82,7 @@
     "browserNotFound": "Browser yang dipilih tidak ditemukan pada perangkat ini.",
     "invalidUrl": "Harap masukkan URL Google Slides yang valid.",
     "captureFailed": "Gagal merekam slide. Pastikan slide dapat diakses.",
-    "selectDownloadMode": "Pilih setidaknya satu mode unduhan."
+    "selectDownloadMode": "Pilih setidaknya satu mode unduhan.",
+    "transferFailed": "Transfer gagal: {error}"
   }
 }

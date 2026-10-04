@@ -61,6 +61,16 @@ function renderTranslations() {
 // App State
 let selectedBrowser = null;
 let currentUrl = '';
+let activeScreenIndex = 1;
+
+function isHomepageScreen() {
+  return activeScreenIndex === 1 || activeScreenIndex === 2;
+}
+
+function syncUpdateCheckVisibility() {
+  if (!btnCheckUpdates) return;
+  btnCheckUpdates.classList.toggle('hidden', !isHomepageScreen());
+}
 
 // DOM Elements
 const screens = [
@@ -74,6 +84,7 @@ const screens = [
 ];
 
 function showScreen(index) {
+  activeScreenIndex = index;
   screens.forEach((screen, i) => {
     if (i === index - 1) {
       screen.classList.add('active');
@@ -81,6 +92,7 @@ function showScreen(index) {
       screen.classList.remove('active');
     }
   });
+  syncUpdateCheckVisibility();
   if (index === 1) {
     renderBrowserSelectionScreen();
   }
@@ -314,6 +326,7 @@ async function runUpdateCheck() {
 }
 
 btnCheckUpdates.addEventListener('click', () => {
+  if (!isHomepageScreen()) return;
   runUpdateCheck();
 });
 
@@ -390,4 +403,6 @@ selectBrowser.addEventListener('change', (e) => {
     renderBrowserSelectionScreen();
   }
 });
+
+syncUpdateCheckVisibility();
 

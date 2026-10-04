@@ -13,17 +13,17 @@ html[data-theme="light"] {
   --bg-card: #ffffff;
   --text-main: #1e293b;
   --text-muted: #64748b;
-  
+
   --primary: #0d9488;
   --primary-hover: #0f766e;
   --accent: #7c3aed;
   --accent-hover: #6d28d9;
-  
+
   --border-color: #e2e8f0;
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
   --radius: 8px;
-  
+
   /* Error Message Palette */
   --error-bg: #fef2f2;
   --error-border: #f87171;
@@ -39,17 +39,17 @@ html[data-theme="github-dark"] {
   --bg-card: #21262d;
   --text-main: #c9d1d9;
   --text-muted: #8b949e;
-  
+
   --primary: #238636;
   --primary-hover: #2ea043;
   --accent: #58a6ff;
   --accent-hover: #79c0ff;
-  
+
   --border-color: #30363d;
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
   --radius: 8px;
-  
+
   /* Error Message Palette */
   --error-bg: #2d1517;
   --error-border: #f85149;
@@ -65,17 +65,17 @@ html[data-theme="ayu-dark"] {
   --bg-card: #191e2a;
   --text-main: #e6e1cf;
   --text-muted: #5c6773;
-  
+
   --primary: #ffb454;
   --primary-hover: #f29e74;
   --accent: #39bae6;
   --accent-hover: #59c2e6;
-  
+
   --border-color: #242936;
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
   --radius: 8px;
-  
+
   /* Error Message Palette */
   --error-bg: #24181f;
   --error-border: #ff3333;
@@ -93,6 +93,7 @@ body {
 .screen {
   display: none;
 }
+
 .screen.active {
   display: block;
 }
@@ -108,8 +109,13 @@ body {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .error-box {

@@ -6,6 +6,20 @@ const os = require('os');
 
 let currentTempFolder = null;
 
+function formatDefaultFolderName(date = new Date()) {
+  const pad = (value) => String(value).padStart(2, '0');
+  return `GoogleSlide ${pad(date.getDate())}-${pad(date.getMonth() + 1)}-${date.getFullYear()} ${pad(date.getHours())}-${pad(date.getMinutes())}-${pad(date.getSeconds())}`;
+}
+
+function sanitizeFolderName(folderName) {
+  const safeName = path.basename(String(folderName || '').trim())
+    .replace(/[<>:"/\\|?*]+/g, '_')
+    .replace(/\s+/g, ' ')
+    .replace(/[. ]+$/g, '');
+
+  return safeName || formatDefaultFolderName();
+}
+
 function setupIpcHandlers(mainWindow) {
   ipcMain.handle('browser:select', async (event, payload) => {
     const { browser } = payload;
@@ -54,19 +68,23 @@ function setupIpcHandlers(mainWindow) {
   });
 
   ipcMain.handle('files:transfer', async (event, payload) => {
-    const { destinationPath } = payload;
+    const { destinationPath, folderName } = payload;
     
     try {
       if (!currentTempFolder || !(await fs.pathExists(currentTempFolder))) {
         throw new Error('No temporary capture folder found to transfer.');
       }
+
+      const targetFolderName = sanitizeFolderName(folderName);
+      const finalDestinationPath = path.join(destinationPath, targetFolderName);
+      await fs.ensureDir(finalDestinationPath);
       
       const files = await fs.readdir(currentTempFolder);
       
       // Move each file from temp to destination
       for (const file of files) {
         const srcPath = path.join(currentTempFolder, file);
-        const destPath = path.join(destinationPath, file);
+        const destPath = path.join(finalDestinationPath, file);
         await fs.move(srcPath, destPath, { overwrite: true });
       }
       
@@ -74,7 +92,7 @@ function setupIpcHandlers(mainWindow) {
       await fs.remove(currentTempFolder);
       currentTempFolder = null;
       
-      return { success: true };
+      return { success: true, destinationPath: finalDestinationPath };
     } catch (error) {
       console.error('Transfer error:', error);
       return { success: false, error: error.message };

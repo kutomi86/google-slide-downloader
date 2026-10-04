@@ -164,6 +164,7 @@ btnBackBrowsers.addEventListener('click', () => {
 btnStartCapture.addEventListener('click', async () => {
   currentUrl = urlInput.value.trim();
   urlError.classList.add('hidden');
+  urlError.textContent = '';
   
   if (!currentUrl || !currentUrl.includes('docs.google.com/presentation')) {
     urlError.textContent = t('errors.invalidUrl');
@@ -188,10 +189,14 @@ btnStartCapture.addEventListener('click', async () => {
 const captureStatus = document.getElementById('capture-status');
 
 window.api.onCaptureProgress((data) => {
+  urlError.classList.add('hidden');
+  urlError.textContent = '';
   captureStatus.textContent = t('status.capturing', { current: data.currentSlide, total: '?' });
 });
 
 window.api.onCaptureComplete((data) => {
+  urlError.classList.add('hidden');
+  urlError.textContent = '';
   captureStatus.textContent = t('status.complete');
   showScreen(4);
 });
@@ -204,29 +209,34 @@ window.api.onCaptureError((data) => {
 
 // Screen 4: Directory Selection
 const btnSelectDir = document.getElementById('btn-select-dir');
+const folderNameInput = document.getElementById('folder-name-input');
 const transferStatus = document.getElementById('transfer-status');
+
+function getFolderName() {
+  return folderNameInput.value.trim();
+}
 
 btnSelectDir.addEventListener('click', async () => {
   const result = await window.api.selectDirectory();
   
   if (result.path) {
     btnSelectDir.disabled = true;
-    btnSelectDir.classList.add('opacity-50', 'cursor-not-allowed');
+    folderNameInput.disabled = true;
     transferStatus.classList.remove('hidden');
-    
-    const transferResult = await window.api.transferFiles({ destinationPath: result.path });
-    
+
+    const transferResult = await window.api.transferFiles({
+      destinationPath: result.path,
+      folderName: getFolderName(),
+    });
+
     if (transferResult.success) {
       showScreen(5);
     } else {
       alert(`Transfer failed: ${transferResult.error}`);
-      showScreen(4);
+      btnSelectDir.disabled = false;
+      folderNameInput.disabled = false;
+      transferStatus.classList.add('hidden');
     }
-    
-    // Reset button state
-    btnSelectDir.disabled = false;
-    btnSelectDir.classList.remove('opacity-50', 'cursor-not-allowed');
-    transferStatus.classList.add('hidden');
   }
 });
 
@@ -240,6 +250,7 @@ window.api.onTransferComplete((data) => {
 const btnReset = document.getElementById('btn-reset');
 btnReset.addEventListener('click', () => {
   urlInput.value = '';
+  folderNameInput.value = '';
   captureStatus.textContent = t('status.searchingBrowser') || 'Initializing browser session...';
   showScreen(2);
 });

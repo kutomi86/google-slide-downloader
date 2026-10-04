@@ -126,6 +126,10 @@ body {
   gap: 8px;
 }
 
+.error-box.hidden {
+  display: none;
+}
+
 .browser-card.is-default-focused {
   border: 2px solid var(--primary);
   box-shadow: 0 0 12px var(--primary);

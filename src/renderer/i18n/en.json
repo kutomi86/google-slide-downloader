@@ -18,6 +18,10 @@
     "btnStart": "Start Downloading",
     "btnBack": "Back to Browsers"
   },
+  "folderName": {
+    "label": "Folder name",
+    "placeholder": "GoogleSlide DD/MM/YYYY hh:mm:ss"
+  },
   "status": {
     "searchingBrowser": "Locating browser instance...",
     "capturing": "Capturing slide {current} of {total}...",

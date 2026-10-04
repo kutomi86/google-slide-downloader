@@ -18,6 +18,10 @@
     "btnStart": "Mulai Mengunduh",
     "btnBack": "Kembali ke Pilih Browser"
   },
+  "folderName": {
+    "label": "Nama folder",
+    "placeholder": "GoogleSlide DD/MM/YYYY hh:mm:ss"
+  },
   "status": {
     "searchingBrowser": "Mencari lokasi browser...",
     "capturing": "Merekam slide {current} dari {total}...",

@@ -7,7 +7,7 @@ if (fs.existsSync(distPath)) {
   console.log('\n🧹 Starting post-build cleanup...');
   
   const files = fs.readdirSync(distPath);
-  const releaseInstallerPattern = /Setup .*\.exe$/i;
+  const releaseInstallerPattern = /Setup[ .].*\.exe$/i;
   
   files.forEach(file => {
     // Keep only the installer and the update metadata that GitHub Releases and electron-updater need.

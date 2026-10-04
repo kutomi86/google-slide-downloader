@@ -2,6 +2,7 @@
   "appId": "com.kutomi86.googleslidedownloader",
   "productName": "Google Slides Downloader",
   "copyright": "Copyright © 2026",
+  "artifactName": "Google.Slides.Downloader.Setup.${version}.${ext}",
   "directories": {
     "output": "dist"
   },

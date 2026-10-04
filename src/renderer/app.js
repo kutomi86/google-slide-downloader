@@ -330,6 +330,7 @@ const btnCloseSettings = document.getElementById('btn-close-settings');
 const selectTheme = document.getElementById('select-theme');
 const selectLang = document.getElementById('select-lang');
 const selectBrowser = document.getElementById('select-browser');
+const updateVersionLine = document.getElementById('update-version-line');
 const btnCheckUpdates = document.getElementById('btn-check-updates');
 const btnUpdateAccept = document.getElementById('btn-update-accept');
 const btnUpdateDecline = document.getElementById('btn-update-decline');
@@ -352,6 +353,7 @@ btnCloseSettings.addEventListener('click', () => {
 async function runUpdateCheck() {
   settingsModal.classList.add('hidden');
   showLoadingState(t('updateCheck.loadingTitle'), t('updateCheck.loadingStatus'));
+  updateVersionLine.classList.add('hidden');
 
   const result = await window.api.checkForUpdates();
 
@@ -362,6 +364,10 @@ async function runUpdateCheck() {
   }
 
   if (result.isNewerVersionAvailable) {
+    const currentVersion = result.currentVersion || window.api.appVersion || '';
+    const nextVersion = result.updateInfo?.version || '';
+    updateVersionLine.textContent = `v${currentVersion} -> v${nextVersion}`;
+    updateVersionLine.classList.remove('hidden');
     showScreen(6);
     return;
   }
@@ -384,7 +390,12 @@ btnUpdateAccept.addEventListener('click', () => {
 
   window.api.downloadUpdate().then((result) => {
     if (!result.success) {
-      alert(result.error || t('updateCheck.errorFallback'));
+      const errorMessage = result.error || t('updateCheck.errorFallback');
+      if (/404|cannot download|not found/i.test(errorMessage)) {
+        alert('The update package could not be downloaded. Check that the GitHub release contains the installer and blockmap assets for this version.');
+      } else {
+        alert(errorMessage);
+      }
       showScreen(1);
     }
   });

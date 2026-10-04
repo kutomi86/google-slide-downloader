@@ -22,6 +22,7 @@ function createUpdateManager(mainWindow) {
   autoUpdater.on('update-available', (info) => {
     updateAvailable = true;
     sendToRenderer('update:available', {
+      currentVersion: app.getVersion(),
       version: info.version,
       releaseName: info.releaseName || '',
       releaseNotes: info.releaseNotes || '',
@@ -41,6 +42,7 @@ function createUpdateManager(mainWindow) {
 
   autoUpdater.on('update-downloaded', (info) => {
     sendToRenderer('update:downloaded', {
+      currentVersion: app.getVersion(),
       version: info.version,
       releaseName: info.releaseName || '',
       releaseNotes: info.releaseNotes || '',
@@ -69,6 +71,7 @@ function createUpdateManager(mainWindow) {
 
     return {
       success: true,
+      currentVersion: app.getVersion(),
       isNewerVersionAvailable: !!updateInfo,
       updateInfo: updateInfo
         ? {

@@ -60,8 +60,8 @@
       <div class="flex justify-center mb-6">
         <div class="loader"></div>
       </div>
-      <h2 class="text-2xl font-bold mb-2">Capturing Slides...</h2>
-      <p id="capture-status" class="text-[var(--text-muted)]">Initializing browser session...</p>
+      <h2 id="loading-title" class="text-2xl font-bold mb-2">Capturing Slides...</h2>
+      <p id="loading-status" class="text-[var(--text-muted)]">Initializing browser session...</p>
     </div>
 
     <!-- Screen 4: Directory Selection / Transfer -->
@@ -92,6 +92,30 @@
       <button id="btn-reset" class="bg-[var(--bg-secondary)] text-[var(--text-main)] font-semibold py-3 px-8 rounded-lg hover:bg-[var(--border-color)] transition cursor-pointer">
         Download Another
       </button>
+    </div>
+
+    <!-- Screen 6: Update Confirmation -->
+    <div id="screen-6" class="screen text-center py-12">
+      <div class="text-6xl mb-6">⬇️</div>
+      <h2 class="text-2xl font-bold mb-4" data-i18n="updatePrompt.title">Do you want to update the app now?</h2>
+      <p class="text-[var(--text-muted)] mb-8" data-i18n="updatePrompt.subtitle">A newer version is available.</p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+        <button id="btn-update-decline" class="flex-1 bg-[var(--bg-secondary)] text-[var(--text-main)] font-semibold py-3 px-8 rounded-lg hover:bg-[var(--border-color)] transition cursor-pointer" data-i18n="updatePrompt.no">No</button>
+        <button id="btn-update-accept" class="flex-1 bg-[var(--primary)] text-white font-semibold py-3 px-8 rounded-lg hover:bg-[var(--primary-hover)] transition cursor-pointer" data-i18n="updatePrompt.yes">Yes</button>
+      </div>
+    </div>
+
+    <!-- Screen 7: Update Restart Prompt -->
+    <div id="screen-7" class="screen text-center py-12">
+      <div class="text-6xl mb-6">♻️</div>
+      <h2 class="text-2xl font-bold mb-4" data-i18n="restartPrompt.title">Update downloaded</h2>
+      <p class="text-[var(--text-muted)] mb-8" data-i18n="restartPrompt.subtitle">Restart the app to finish installing the update.</p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+        <button id="btn-restart-later" class="flex-1 bg-[var(--bg-secondary)] text-[var(--text-main)] font-semibold py-3 px-8 rounded-lg hover:bg-[var(--border-color)] transition cursor-pointer" data-i18n="restartPrompt.later">Later</button>
+        <button id="btn-restart-now" class="flex-1 bg-[var(--primary)] text-white font-semibold py-3 px-8 rounded-lg hover:bg-[var(--primary-hover)] transition cursor-pointer" data-i18n="restartPrompt.now">Restart now</button>
+      </div>
     </div>
 
   </div>
@@ -128,6 +152,8 @@
             <option value="brave" data-i18n="browserSelect.brave">Brave Browser</option>
           </select>
         </div>
+
+        <button id="btn-check-updates" class="w-full bg-[var(--bg-secondary)] text-[var(--text-main)] font-semibold py-3 rounded-lg hover:bg-[var(--border-color)] transition cursor-pointer" data-i18n="settingsModal.checkUpdates">Check Updates</button>
       </div>
       
       <button id="btn-close-settings" class="mt-8 w-full bg-[var(--primary)] text-white font-semibold py-3 rounded-lg hover:bg-[var(--primary-hover)] transition cursor-pointer" data-i18n="settingsModal.btnClose">

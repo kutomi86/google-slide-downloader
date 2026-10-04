@@ -68,7 +68,9 @@ const screens = [
   document.getElementById('screen-2'),
   document.getElementById('screen-3'),
   document.getElementById('screen-4'),
-  document.getElementById('screen-5')
+  document.getElementById('screen-5'),
+  document.getElementById('screen-6'),
+  document.getElementById('screen-7')
 ];
 
 function showScreen(index) {
@@ -173,7 +175,7 @@ btnStartCapture.addEventListener('click', async () => {
   }
   
   showScreen(3);
-  captureStatus.textContent = t('status.searchingBrowser');
+  showLoadingState(t('status.searchingBrowser'), t('status.searchingBrowser'));
   
   // Trigger Capture
   const result = await window.api.startCapture({ url: currentUrl, browser: selectedBrowser });
@@ -186,18 +188,27 @@ btnStartCapture.addEventListener('click', async () => {
 });
 
 // Screen 3: IPC Listeners for Progress
-const captureStatus = document.getElementById('capture-status');
+const loadingTitle = document.getElementById('loading-title');
+const loadingStatus = document.getElementById('loading-status');
+
+function showLoadingState(title, status) {
+  loadingTitle.textContent = title;
+  loadingStatus.textContent = status;
+  showScreen(3);
+}
 
 window.api.onCaptureProgress((data) => {
   urlError.classList.add('hidden');
   urlError.textContent = '';
-  captureStatus.textContent = t('status.capturing', { current: data.currentSlide, total: '?' });
+  loadingTitle.textContent = t('status.loadingSlides');
+  loadingStatus.textContent = t('status.capturing', { current: data.currentSlide, total: '?' });
 });
 
 window.api.onCaptureComplete((data) => {
   urlError.classList.add('hidden');
   urlError.textContent = '';
-  captureStatus.textContent = t('status.complete');
+  loadingTitle.textContent = t('status.complete');
+  loadingStatus.textContent = t('status.saving');
   showScreen(4);
 });
 
@@ -251,7 +262,7 @@ const btnReset = document.getElementById('btn-reset');
 btnReset.addEventListener('click', () => {
   urlInput.value = '';
   folderNameInput.value = '';
-  captureStatus.textContent = t('status.searchingBrowser') || 'Initializing browser session...';
+  showLoadingState(t('status.searchingBrowser'), t('status.searchingBrowser'));
   showScreen(2);
 });
 
@@ -262,6 +273,11 @@ const btnCloseSettings = document.getElementById('btn-close-settings');
 const selectTheme = document.getElementById('select-theme');
 const selectLang = document.getElementById('select-lang');
 const selectBrowser = document.getElementById('select-browser');
+const btnCheckUpdates = document.getElementById('btn-check-updates');
+const btnUpdateAccept = document.getElementById('btn-update-accept');
+const btnUpdateDecline = document.getElementById('btn-update-decline');
+const btnRestartNow = document.getElementById('btn-restart-now');
+const btnRestartLater = document.getElementById('btn-restart-later');
 
 // Initialize dropdowns with current settings
 selectTheme.value = settings.theme;
@@ -274,6 +290,82 @@ btnSettings.addEventListener('click', () => {
 
 btnCloseSettings.addEventListener('click', () => {
   settingsModal.classList.add('hidden');
+});
+
+async function runUpdateCheck() {
+  settingsModal.classList.add('hidden');
+  showLoadingState(t('updateCheck.loadingTitle'), t('updateCheck.loadingStatus'));
+
+  const result = await window.api.checkForUpdates();
+
+  if (!result.success) {
+    alert(result.error || t('updateCheck.errorFallback'));
+    showScreen(1);
+    return;
+  }
+
+  if (result.isNewerVersionAvailable) {
+    showScreen(6);
+    return;
+  }
+
+  alert(t('updateCheck.noUpdate'));
+  showScreen(1);
+}
+
+btnCheckUpdates.addEventListener('click', () => {
+  runUpdateCheck();
+});
+
+btnUpdateDecline.addEventListener('click', () => {
+  showScreen(1);
+});
+
+btnUpdateAccept.addEventListener('click', () => {
+  showLoadingState(t('updateCheck.downloadingTitle'), t('updateCheck.downloadingStatus'));
+
+  window.api.downloadUpdate().then((result) => {
+    if (!result.success) {
+      alert(result.error || t('updateCheck.errorFallback'));
+      showScreen(1);
+    }
+  });
+});
+
+btnUpdateDecline.addEventListener('click', () => {
+  showScreen(1);
+});
+
+btnRestartNow.addEventListener('click', async () => {
+  showLoadingState(t('restartPrompt.restartingTitle'), t('restartPrompt.restartingStatus'));
+
+  const result = await window.api.installUpdate();
+  if (!result.success) {
+    alert(result.error || t('updateCheck.errorFallback'));
+    showScreen(1);
+  }
+});
+
+btnRestartLater.addEventListener('click', () => {
+  showScreen(1);
+});
+
+window.api.onUpdateDownloadProgress((progress) => {
+  loadingTitle.textContent = t('updateCheck.downloadingTitle');
+  loadingStatus.textContent = t('updateCheck.downloadProgress', {
+    percent: Math.round(progress.percent || 0),
+    transferred: Math.round((progress.transferred || 0) / 1024 / 1024),
+    total: Math.round((progress.total || 0) / 1024 / 1024),
+  });
+});
+
+window.api.onUpdateDownloaded((data) => {
+  showScreen(7);
+});
+
+window.api.onUpdateError((data) => {
+  alert(data.message || t('updateCheck.errorFallback'));
+  showScreen(1);
 });
 
 selectTheme.addEventListener('change', (e) => {

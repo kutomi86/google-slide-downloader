@@ -7,12 +7,11 @@ if (fs.existsSync(distPath)) {
   console.log('\n🧹 Starting post-build cleanup...');
   
   const files = fs.readdirSync(distPath);
+  const releaseInstallerPattern = /Setup .*\.exe$/i;
   
   files.forEach(file => {
-    // We want to KEEP the main Setup executable.
-    // electron-builder often generates a blockmap, yaml files, the win-unpacked folder,
-    // and sometimes an uninstaller executable. We only want the main setup.
-    if (file.endsWith('.exe') && !file.includes('uninstaller')) {
+    // Keep only the installer and the update metadata that GitHub Releases and electron-updater need.
+    if (file === 'latest.yml' || file.endsWith('.blockmap') || releaseInstallerPattern.test(file)) {
       console.log(`✅ Keeping: ${file}`);
       return; 
     }
@@ -31,5 +30,5 @@ if (fs.existsSync(distPath)) {
     }
   });
   
-  console.log('✨ Cleanup complete! Only the standalone executable remains in dist/.\n');
+  console.log('✨ Cleanup complete! Only release-ready installer files remain in dist/.\n');
 }

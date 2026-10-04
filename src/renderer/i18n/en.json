@@ -24,9 +24,35 @@
   },
   "status": {
     "searchingBrowser": "Locating browser instance...",
+    "loadingSlides": "Capturing slides...",
     "capturing": "Capturing slide {current} of {total}...",
     "saving": "Moving slides to destination directory...",
     "complete": "Download complete!"
+  },
+  "updateCheck": {
+    "loadingTitle": "Checking for updates...",
+    "loadingStatus": "Please wait while we look for a newer version.",
+    "preparingTitle": "Preparing update...",
+    "preparingStatus": "Downloading update files. Please wait.",
+    "downloadingTitle": "Downloading update...",
+    "downloadingStatus": "Please wait while the app downloads the update.",
+    "downloadProgress": "Downloading update... {percent}% ({transferred} MB / {total} MB)",
+    "noUpdate": "You are already using the latest version.",
+    "errorFallback": "Unable to check for updates right now."
+  },
+  "updatePrompt": {
+    "title": "Do you want to update the app now?",
+    "subtitle": "A newer version is available.",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "restartPrompt": {
+    "title": "Update downloaded",
+    "subtitle": "Restart the app to finish installing the update.",
+    "now": "Restart now",
+    "later": "Later",
+    "restartingTitle": "Installing update...",
+    "restartingStatus": "The app will close and reopen automatically."
   },
   "settingsModal": {
     "title": "Application Settings",
@@ -39,6 +65,7 @@
     "langId": "Bahasa Indonesia",
     "defaultBrowserLabel": "Default Browser",
     "defaultNone": "None (Always ask)",
+    "checkUpdates": "Check Updates",
     "btnClose": "Save & Close"
   },
   "errors": {

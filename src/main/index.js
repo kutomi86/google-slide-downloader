@@ -1,6 +1,7 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const setupIpcHandlers = require('./ipcHandlers');
+const createUpdateManager = require('./updateManager');
 
 let mainWindow;
 
@@ -18,7 +19,8 @@ function createWindow() {
   mainWindow.loadFile(path.join(__dirname, '..', 'renderer', 'index.html'));
   
   // Setup IPC Handlers
-  setupIpcHandlers(mainWindow);
+  const updateManager = createUpdateManager(mainWindow);
+  setupIpcHandlers(mainWindow, updateManager);
 }
 
 app.whenReady().then(() => {

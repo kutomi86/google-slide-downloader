@@ -3,6 +3,7 @@ const { getBrowserPath } = require('./browserDetector');
 const fs = require('fs-extra');
 const path = require('path');
 const os = require('os');
+const { checkForUpdates } = require('./updateChecker');
 
 let currentTempFolder = null;
 
@@ -20,7 +21,43 @@ function sanitizeFolderName(folderName) {
   return safeName || formatDefaultFolderName();
 }
 
-function setupIpcHandlers(mainWindow) {
+function setupIpcHandlers(mainWindow, updateManager) {
+  ipcMain.handle('updates:check', async () => {
+    try {
+      return await updateManager.checkForUpdates();
+    } catch (error) {
+      console.error('Update check error:', error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  });
+
+  ipcMain.handle('updates:download', async () => {
+    try {
+      return await updateManager.downloadUpdate();
+    } catch (error) {
+      console.error('Update download error:', error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  });
+
+  ipcMain.handle('updates:install', async () => {
+    try {
+      return await updateManager.installUpdate();
+    } catch (error) {
+      console.error('Update install error:', error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  });
+
   ipcMain.handle('browser:select', async (event, payload) => {
     const { browser } = payload;
     const executablePath = getBrowserPath(browser);

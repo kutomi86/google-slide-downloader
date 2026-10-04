@@ -24,9 +24,35 @@
   },
   "status": {
     "searchingBrowser": "Mencari lokasi browser...",
+    "loadingSlides": "Merekam slide...",
     "capturing": "Merekam slide {current} dari {total}...",
     "saving": "Memindahkan slide ke folder tujuan...",
     "complete": "Pengunduhan selesai!"
+  },
+  "updateCheck": {
+    "loadingTitle": "Memeriksa pembaruan...",
+    "loadingStatus": "Mohon tunggu saat kami mencari versi yang lebih baru.",
+    "preparingTitle": "Mempersiapkan pembaruan...",
+    "preparingStatus": "Mengunduh file pembaruan. Mohon tunggu.",
+    "downloadingTitle": "Mengunduh pembaruan...",
+    "downloadingStatus": "Mohon tunggu saat aplikasi mengunduh pembaruan.",
+    "downloadProgress": "Mengunduh pembaruan... {percent}% ({transferred} MB / {total} MB)",
+    "noUpdate": "Anda sudah menggunakan versi terbaru.",
+    "errorFallback": "Tidak dapat memeriksa pembaruan saat ini."
+  },
+  "updatePrompt": {
+    "title": "Apakah Anda ingin memperbarui aplikasi sekarang?",
+    "subtitle": "Ada versi yang lebih baru.",
+    "yes": "Ya",
+    "no": "Tidak"
+  },
+  "restartPrompt": {
+    "title": "Pembaruan telah diunduh",
+    "subtitle": "Mulai ulang aplikasi untuk menyelesaikan pemasangan pembaruan.",
+    "now": "Mulai ulang sekarang",
+    "later": "Nanti",
+    "restartingTitle": "Memasang pembaruan...",
+    "restartingStatus": "Aplikasi akan ditutup dan dibuka kembali secara otomatis."
   },
   "settingsModal": {
     "title": "Pengaturan Aplikasi",
@@ -39,6 +65,7 @@
     "langId": "Bahasa Indonesia",
     "defaultBrowserLabel": "Browser Utama",
     "defaultNone": "Tentukan Nanti (Selalu Tanya)",
+    "checkUpdates": "Periksa Pembaruan",
     "btnClose": "Simpan & Tutup"
   },
   "errors": {

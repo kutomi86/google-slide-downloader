@@ -14,6 +14,13 @@
     "target": "nsis",
     "icon": "src/renderer/assets/icon.ico"
   },
+  "publish": [
+    {
+      "provider": "github",
+      "owner": "kutomi86",
+      "repo": "google-slide-downloader"
+    }
+  ],
   "nsis": {
     "oneClick": false,
     "allowToChangeInstallationDirectory": true,

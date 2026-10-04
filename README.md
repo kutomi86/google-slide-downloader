@@ -1,92 +1,92 @@
-# Google Slides Downloader Desktop Application
+# 📊 Google Slides Downloader
 
-A desktop utility designed to automate the process of capturing high-resolution slide screenshots from Google Slides presentations across various Chromium-based browsers.
+A native Electron desktop application that automates the extraction of high-resolution, slide-by-slide screenshots from any accessible Google Slides presentation using powerful `puppeteer-core` browser automation.
+
+## ✨ Key Features
+
+- **Multi-Browser Support**: Connects securely to your local installations of Google Chrome, Microsoft Edge, or Brave Browser without bundling a heavy Chromium instance.
+- **Native File Export**: Automatically saves all slides to a temporary workspace and lets you pick the final destination using the native Windows Explorer directory dialog.
+- **Multi-Theme UI**: Seamlessly switch between **Light (Default)**, **GitHub Dark**, and **Ayu Dark** visual themes in real-time.
+- **Internationalization (i18n)**: Full interface translation support built-in for **English** and **Bahasa Indonesia**.
+- **Keyboard Navigation**: Assign a default browser to bypass the selection screen instantly by pressing `[ENTER]`.
 
 ---
 
-## 📌 App Workflow Outline
+## 🖥️ Prerequisites & System Requirements
 
+To run this application locally, ensure your system meets the following requirements:
+- **Operating System:** Windows 10/11
+- **Runtime:** Node.js (v18 or higher recommended)
+- **Browser Requirement:** At least one supported browser installed on your machine:
+  - Google Chrome
+  - Microsoft Edge
+  - Brave Browser
+
+---
+
+## 🚀 Installation & Local Development
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/kutomi86/google-slide-downloader.git
+   cd google-slide-downloader
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Launch the app in development mode:**
+   ```bash
+   npm start
+   ```
+
+---
+
+## 🔄 How It Works (Workflow)
+
+The application simplifies a complex automation flow into 5 easy steps:
+
+1. **Browser Selection:** The app auto-detects installed browsers on your Windows machine. Select the one you wish to use (or hit `[ENTER]` if you've set a default).
+2. **URL Input:** Paste the URL of the Google Slides presentation. The app automatically normalizes it into presentation mode.
+3. **Automated Slide Extraction:** The Puppeteer engine hooks into your browser, waits for slides to render, captures high-res screenshots, and uses simulated keyboard inputs (`ArrowRight`) to traverse the entire deck.
+4. **Native Directory Selection:** Once captured, the app opens a native Windows folder picker for you to decide where the images should be saved.
+5. **File Transfer Completion:** The slides are moved safely across your system to the final destination, and temporary artifacts are instantly cleaned up.
+
+---
+
+## ⚙️ Settings & Customization
+
+Click the **Settings (⚙️)** gear icon in the top-right corner of the application to customize your experience. The app uses local storage to remember your preferences:
+
+- **Language Switching:** Toggle instantly between English and Bahasa Indonesia.
+- **UI Themes:** Choose a comfortable color palette (Light, GitHub Dark, or Ayu Dark). Theme changes are applied instantaneously using custom CSS variables.
+- **Default Browser Binding:** Set your preferred automation browser so you don't have to select it every time you open the app.
+
+---
+
+## 🏗️ Tech Stack & Architecture
+
+- **Desktop Shell:** Electron (Node Integration disabled, secure Context Isolation)
+- **Automation Engine:** Puppeteer-Core
+- **Frontend UI:** HTML5, CSS3 (Custom CSS Properties & Tailwind utilities), Vanilla JS
+- **File Operations:** Node.js `fs-extra` (for robust cross-drive file moving)
+
+---
+
+## 📦 Building for Production
+
+To package the application into a standalone Windows executable (`.exe`) installer, run the following command:
+
+```bash
+npm run build
 ```
-[ Launch App ]
-      │
-      ▼
-[ Screen 1: Select Browser ] ───► (Chrome / Edge / Brave)
-      │
-      ▼
-[ Screen 2: Input URL ] ────────► Enter Google Slides Link
-      │
-      ▼
-[ Automation Processing ]
-  ├─ 1. Locate or launch selected browser
-  ├─ 2. Connect to tab matching the input URL
-  ├─ 3. Navigate through slides (Slide 1 to End)
-  └─ 4. Capture & save screenshots to temp directory
-      │
-      ▼
-[ Windows Explorer Dialog ] ────► Select Target Output Directory
-      │
-      ▼
-[ File Transfer Modal ] ────────► Non-cancelable loading state while moving files
-      │
-      ▼
-[ Completion ] ─────────────────► Reset state & return to URL input page
-```
+
+This triggers `electron-builder` using the configurations set in `electron-builder.json`. The final compiled installer will be available in the `dist/` directory.
 
 ---
 
-## ⚙️ Detailed Functional Requirements
+## 📄 License & Acknowledgments
 
-### 1. Browser Selection Page
-* **Supported Browsers:** Google Chrome, Microsoft Edge, Brave.
-* **UI Behavior:** Visual browser icons for quick selection.
-* **Navigation:** Ability to switch selected browser at any point in the workflow.
-
-### 2. URL Input & Session Hooking
-* **Input Field:** Accepts valid Google Slides presentation URLs.
-* **Session Detection:**
-  * Checks if the target browser process is active.
-  * If the browser is open, attempts to detect an existing tab with the matching presentation URL.
-  * If the browser/tab is not found, launches the browser and opens the URL automatically.
-
-### 3. Automated Screenshot Capture Engine
-* **Execution:**
-  * Navigates presentation slides sequentially from index `1` to `N`.
-  * Captures each slide viewport or canvas as an image file (e.g., `slide_001.png`).
-  * Saves images to a temporary working directory inside the application's local workspace (`/temp/downloads/<session_id>/`).
-
-### 4. File Export & Directory Selection
-* **Directory Picker:** Calls the native Windows File Explorer directory picker (`dialog.showOpenDialog`).
-* **File Relocation:**
-  * Displays a non-dismissible modal with an active loading indicator.
-  * Moves the captured images from the temporary workspace into the user-selected target folder.
-  * Cleans up temporary artifacts.
-
-### 5. Loop & Reset Logic
-* Upon successful relocation, clears the active task state and returns the user to the **URL Input Page** for further downloads.
-* Includes a global header/back button to return to the **Browser Selection Page**.
-
----
-
-## 🛠️ Technical Considerations & Challenges
-
-### Chrome DevTools Protocol (CDP) & Remote Debugging
-Automating an **already running** browser instance requires that the browser was launched with remote debugging enabled (e.g., `--remote-debugging-port=9222`). Standard browser security models prevent outside programs from interacting with arbitrary running browser tabs.
-* **Solution Strategy:**
-  * Option A: Launch a dedicated automated browser instance (headless or headed) using Playwright/Puppeteer.
-  * Option B: Instruct the user or auto-relaunch the target browser with remote debugging flags attached.
-
----
-
-## 📂 Proposed Project Structure
-
-```text
-google-slides-downloader/
-├── src/
-├── ui/              # Desktop Frontend Layout & Pages
-│   ├── components/  # Buttons, Modals, Loading Animations
-│   └── views/       # BrowserSelect, UrlInput, ProcessingModal
-├── automation/      # Browser Control & Screenshot Engine
-│   ├── browser.js   # Browser Process Hooking (Playwright/Puppeteer)
-│   └── capturer.js  # Slide navigation & screen capture logic
-└── utils/           # File System & Native Dialog Helpers
-```
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

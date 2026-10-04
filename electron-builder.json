@@ -1,0 +1,23 @@
+{
+  "appId": "com.kutomi86.googleslidedownloader",
+  "productName": "Google Slides Downloader",
+  "copyright": "Copyright © 2026",
+  "directories": {
+    "output": "dist"
+  },
+  "files": [
+    "src/**/*",
+    "package.json",
+    "tailwind.config.js"
+  ],
+  "win": {
+    "target": "nsis",
+    "icon": "src/renderer/assets/icon.ico"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true
+  }
+}

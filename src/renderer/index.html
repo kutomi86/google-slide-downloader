@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="app.title">Google Slides Downloader</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+</head>
+<body class="h-screen w-screen overflow-hidden flex items-center justify-center transition-colors duration-200">
+  
+  <div class="absolute top-4 right-4 z-10">
+    <button id="btn-settings" class="p-2 text-2xl text-[var(--text-muted)] hover:text-[var(--primary)] transition cursor-pointer" aria-label="Settings">
+      ⚙️
+    </button>
+  </div>
+
+  <div class="w-full max-w-2xl bg-[var(--bg-card)] rounded-xl shadow-lg p-8 relative transition-colors duration-200">
+    
+    <!-- Screen 1: Browser Selection -->
+    <div id="screen-1" class="screen active text-center">
+      <h1 class="text-3xl font-bold mb-2" data-i18n="browserSelect.title">Select a Browser</h1>
+      <p class="text-[var(--text-muted)] mb-8" data-i18n="browserSelect.subtitle">Choose the Chromium browser to use for automation.</p>
+      
+      <div class="grid grid-cols-3 gap-6">
+        <button class="browser-btn browser-card flex flex-col items-center justify-center p-6 border-2 border-[var(--border-color)] rounded-lg hover:border-[var(--primary)] hover:bg-[var(--bg-secondary)] transition cursor-pointer relative" data-browser="chrome">
+          <div class="text-4xl mb-3">🌐</div>
+          <div class="font-semibold" data-i18n="browserSelect.chrome">Google Chrome</div>
+        </button>
+        <button class="browser-btn browser-card flex flex-col items-center justify-center p-6 border-2 border-[var(--border-color)] rounded-lg hover:border-[var(--primary)] hover:bg-[var(--bg-secondary)] transition cursor-pointer relative" data-browser="edge">
+          <div class="text-4xl mb-3">🌊</div>
+          <div class="font-semibold" data-i18n="browserSelect.edge">Microsoft Edge</div>
+        </button>
+        <button class="browser-btn browser-card flex flex-col items-center justify-center p-6 border-2 border-[var(--border-color)] rounded-lg hover:border-[var(--primary)] hover:bg-[var(--bg-secondary)] transition cursor-pointer relative" data-browser="brave">
+          <div class="text-4xl mb-3">🦁</div>
+          <div class="font-semibold" data-i18n="browserSelect.brave">Brave Browser</div>
+        </button>
+      </div>
+      <div id="browser-error" class="error-box mt-6 hidden"></div>
+    </div>
+
+    <!-- Screen 2: URL Input -->
+    <div id="screen-2" class="screen">
+      <button id="btn-back-browsers" class="text-sm text-[var(--text-muted)] hover:text-[var(--text-main)] absolute top-6 left-6 flex items-center cursor-pointer" data-i18n="urlInput.btnBack">
+        ← Back to Browsers
+      </button>
+      
+      <div class="text-center mt-6">
+        <h2 class="text-2xl font-bold mb-6" data-i18n="urlInput.title">Enter Presentation URL</h2>
+        <input type="text" id="url-input" class="w-full p-4 border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-main)] rounded-lg mb-6 focus:ring-2 focus:ring-[var(--primary)] focus:outline-none transition-colors" data-i18n-placeholder="urlInput.placeholder" placeholder="https://docs.google.com/presentation/d/...">
+        <button id="btn-start-capture" class="w-full bg-[var(--primary)] text-white font-semibold py-4 rounded-lg hover:bg-[var(--primary-hover)] transition cursor-pointer" data-i18n="urlInput.btnStart">
+          Start Downloading
+        </button>
+        <div id="url-error" class="error-box mt-4 hidden"></div>
+      </div>
+    </div>
+
+    <!-- Screen 3: Live Capture Progress -->
+    <div id="screen-3" class="screen text-center py-12">
+      <div class="flex justify-center mb-6">
+        <div class="loader"></div>
+      </div>
+      <h2 class="text-2xl font-bold mb-2">Capturing Slides...</h2>
+      <p id="capture-status" class="text-[var(--text-muted)]">Initializing browser session...</p>
+    </div>
+
+    <!-- Screen 4: Directory Selection / Transfer -->
+    <div id="screen-4" class="screen text-center py-8">
+      <h2 class="text-2xl font-bold mb-4" data-i18n="status.complete">Capture Complete!</h2>
+      <p class="text-[var(--text-muted)] mb-8">Select a destination folder to save your slides.</p>
+      
+      <button id="btn-select-dir" class="bg-[var(--primary)] text-white font-semibold py-3 px-8 rounded-lg hover:bg-[var(--primary-hover)] transition mb-4 cursor-pointer">
+        Choose Destination Folder
+      </button>
+      
+      <div id="transfer-status" class="mt-4 text-sm text-[var(--text-muted)] hidden" data-i18n="status.saving">
+        Saving files... Please wait.
+      </div>
+    </div>
+
+    <!-- Screen 5: Success -->
+    <div id="screen-5" class="screen text-center py-12">
+      <div class="text-6xl mb-6">🎉</div>
+      <h2 class="text-2xl font-bold mb-2">Success!</h2>
+      <p class="text-[var(--text-muted)] mb-8">Your slides have been saved successfully.</p>
+      
+      <button id="btn-reset" class="bg-[var(--bg-secondary)] text-[var(--text-main)] font-semibold py-3 px-8 rounded-lg hover:bg-[var(--border-color)] transition cursor-pointer">
+        Download Another
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 transition-opacity">
+    <div class="bg-[var(--bg-card)] rounded-xl shadow-lg p-8 max-w-md w-full relative">
+      <h2 class="text-2xl font-bold mb-6 text-[var(--text-main)]" data-i18n="settingsModal.title">Application Settings</h2>
+      
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-semibold mb-1 text-[var(--text-muted)]" data-i18n="settingsModal.themeLabel">Color Theme</label>
+          <select id="select-theme" class="w-full p-2 border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-main)] rounded-lg focus:ring-2 focus:ring-[var(--primary)] focus:outline-none transition-colors">
+            <option value="light" data-i18n="settingsModal.themeLight">Light (Default)</option>
+            <option value="github-dark" data-i18n="settingsModal.themeGithubDark">GitHub Dark</option>
+            <option value="ayu-dark" data-i18n="settingsModal.themeAyuDark">Ayu Dark</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-1 text-[var(--text-muted)]" data-i18n="settingsModal.langLabel">Language</label>
+          <select id="select-lang" class="w-full p-2 border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-main)] rounded-lg focus:ring-2 focus:ring-[var(--primary)] focus:outline-none transition-colors">
+            <option value="en" data-i18n="settingsModal.langEn">English</option>
+            <option value="id" data-i18n="settingsModal.langId">Bahasa Indonesia</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-1 text-[var(--text-muted)]" data-i18n="settingsModal.defaultBrowserLabel">Default Browser</label>
+          <select id="select-browser" class="w-full p-2 border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-main)] rounded-lg focus:ring-2 focus:ring-[var(--primary)] focus:outline-none transition-colors">
+            <option value="none" data-i18n="settingsModal.defaultNone">None (Always ask)</option>
+            <option value="chrome" data-i18n="browserSelect.chrome">Google Chrome</option>
+            <option value="edge" data-i18n="browserSelect.edge">Microsoft Edge</option>
+            <option value="brave" data-i18n="browserSelect.brave">Brave Browser</option>
+          </select>
+        </div>
+      </div>
+      
+      <button id="btn-close-settings" class="mt-8 w-full bg-[var(--primary)] text-white font-semibold py-3 rounded-lg hover:bg-[var(--primary-hover)] transition cursor-pointer" data-i18n="settingsModal.btnClose">
+        Save & Close
+      </button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

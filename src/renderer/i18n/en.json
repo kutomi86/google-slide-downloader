@@ -1,0 +1,45 @@
+{
+  "app": {
+    "title": "Google Slides Downloader",
+    "settings": "Settings"
+  },
+  "browserSelect": {
+    "title": "Select Target Browser",
+    "subtitle": "Choose the browser installed on your computer",
+    "defaultBadge": "Default",
+    "pressEnter": "Press [ENTER] to use default",
+    "chrome": "Google Chrome",
+    "edge": "Microsoft Edge",
+    "brave": "Brave Browser"
+  },
+  "urlInput": {
+    "title": "Enter Presentation URL",
+    "placeholder": "https://docs.google.com/presentation/d/...",
+    "btnStart": "Start Downloading",
+    "btnBack": "Back to Browsers"
+  },
+  "status": {
+    "searchingBrowser": "Locating browser instance...",
+    "capturing": "Capturing slide {current} of {total}...",
+    "saving": "Moving slides to destination directory...",
+    "complete": "Download complete!"
+  },
+  "settingsModal": {
+    "title": "Application Settings",
+    "themeLabel": "Color Theme",
+    "themeLight": "Light (Default)",
+    "themeGithubDark": "GitHub Dark",
+    "themeAyuDark": "Ayu Dark",
+    "langLabel": "Language",
+    "langEn": "English",
+    "langId": "Bahasa Indonesia",
+    "defaultBrowserLabel": "Default Browser",
+    "defaultNone": "None (Always ask)",
+    "btnClose": "Save & Close"
+  },
+  "errors": {
+    "browserNotFound": "The selected browser could not be found on this PC.",
+    "invalidUrl": "Please enter a valid Google Slides URL.",
+    "captureFailed": "Failed to capture slides. Please make sure the slide is accessible."
+  }
+}

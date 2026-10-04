@@ -67,12 +67,18 @@ function createUpdateManager(mainWindow) {
     const result = await autoUpdater.checkForUpdates();
     const updateInfo = result?.updateInfo || null;
 
-    updateAvailable = !!updateInfo;
+    let isNewer = false;
+    if (updateInfo && updateInfo.version) {
+      const { compareVersions } = require('./updateChecker');
+      isNewer = compareVersions(app.getVersion(), updateInfo.version) === 1;
+    }
+
+    updateAvailable = isNewer;
 
     return {
       success: true,
       currentVersion: app.getVersion(),
-      isNewerVersionAvailable: !!updateInfo,
+      isNewerVersionAvailable: isNewer,
       updateInfo: updateInfo
         ? {
             version: updateInfo.version || '',

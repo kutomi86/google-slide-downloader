@@ -8,6 +8,8 @@ async function delay(ms) {
 
 async function captureSlides(page, tempFolder, mainWindow) {
   let slideIndex = 1;
+  let previousHash = null;
+  let lastImageBuffer = null;
 
   // Wait for the slide container to be present. In Google Slides presentation mode, 
   // '.punch-viewer-content' or '#slide-stage' is usually the main container for the slides.
@@ -21,33 +23,69 @@ async function captureSlides(page, tempFolder, mainWindow) {
   await delay(2000);
 
   while (true) {
+    const slideInfo = await page.evaluate(() => {
+      const posElement = document.querySelector('[aria-posinset]');
+      return {
+        hash: window.location.hash,
+        pos: posElement ? posElement.getAttribute('aria-posinset') : null
+      };
+    });
+    const currentHash = slideInfo.pos || slideInfo.hash;
+    const isNewPage = (currentHash !== previousHash) || !currentHash;
+    
+    // Always update UI so it doesn't look stuck
     mainWindow.webContents.send('capture:progress', {
       currentSlide: slideIndex,
-      status: 'Capturing screenshot...'
+      status: isNewPage ? 'Saving slide...' : 'Capturing animation step...'
     });
 
-    const fileName = `slide_${String(slideIndex).padStart(3, '0')}.png`;
-    const filePath = path.join(tempFolder, fileName);
+    if (isNewPage) {
+      // This is a NEW slide (or fallback mode). If we have a previous slide buffered, 
+      // it has reached its final state, so we write it to disk now.
+      if (lastImageBuffer) {
+        const fileName = `slide_${String(slideIndex).padStart(3, '0')}.png`;
+        const filePath = path.join(tempFolder, fileName);
+        await fs.writeFile(filePath, lastImageBuffer);
+        slideIndex++;
+      }
+      previousHash = currentHash;
+    }
 
-    const currentScreenshot = await page.screenshot({ fullPage: false });
-    await fs.writeFile(filePath, currentScreenshot);
+    // Capture the current state. We keep overwriting this to get the latest animation state.
+    lastImageBuffer = await page.screenshot({ fullPage: false });
 
-    // Advance to next slide
+    // Advance to next step/slide
     await page.keyboard.press('ArrowRight');
     
     // Wait for transition animation
     await delay(1500);
     
+    const newSlideInfo = await page.evaluate(() => {
+      const posElement = document.querySelector('[aria-posinset]');
+      return {
+        hash: window.location.hash,
+        pos: posElement ? posElement.getAttribute('aria-posinset') : null
+      };
+    });
+    const newHash = newSlideInfo.pos || newSlideInfo.hash;
     const nextScreenshot = await page.screenshot({ fullPage: false });
-    const currentHash = crypto.createHash('sha1').update(currentScreenshot).digest('hex');
-    const nextHash = crypto.createHash('sha1').update(nextScreenshot).digest('hex');
+    const currentImgHash = crypto.createHash('sha1').update(lastImageBuffer).digest('hex');
+    const nextImgHash = crypto.createHash('sha1').update(nextScreenshot).digest('hex');
 
-    // If the rendered slide did not change, we probably reached the end.
-    if (nextHash === currentHash) {
+    // If the URL hash didn't change AND the pixels didn't change, we are at the end of the presentation.
+    if (newHash === currentHash && currentImgHash === nextImgHash) {
+      // Write the final slide to disk
+      if (lastImageBuffer) {
+        mainWindow.webContents.send('capture:progress', {
+          currentSlide: slideIndex,
+          status: 'Saving final slide...'
+        });
+        const fileName = `slide_${String(slideIndex).padStart(3, '0')}.png`;
+        const filePath = path.join(tempFolder, fileName);
+        await fs.writeFile(filePath, lastImageBuffer);
+      }
       break;
     }
-
-    slideIndex++;
   }
 
   mainWindow.webContents.send('capture:complete', {

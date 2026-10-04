@@ -20,7 +20,8 @@
   },
   "folderName": {
     "label": "Folder/File name",
-    "placeholder": "GoogleSlide"
+    "placeholder": "GoogleSlide",
+    "btnSelectDir": "Choose Destination Folder"
   },
   "downloadModes": {
     "images": "Download as Images",
@@ -31,7 +32,11 @@
     "loadingSlides": "Capturing slides...",
     "capturing": "Capturing slide {current} of {total}...",
     "saving": "Moving slides to destination directory...",
-    "complete": "Download complete!"
+    "complete": "Download complete!",
+    "selectDestination": "Select a destination folder to save your slides.",
+    "successTitle": "Success!",
+    "successSubtitle": "Your slides have been saved successfully.",
+    "downloadAnother": "Download Another"
   },
   "updateCheck": {
     "loadingTitle": "Checking for updates...",
@@ -42,7 +47,8 @@
     "downloadingStatus": "Please wait while the app downloads the update.",
     "downloadProgress": "Downloading update... {percent}% ({transferred} MB / {total} MB)",
     "noUpdate": "You are already using the latest version.",
-    "errorFallback": "Unable to check for updates right now."
+    "errorFallback": "Unable to check for updates right now.",
+    "downloadError": "The update package could not be downloaded. Check that the GitHub release contains the installer and blockmap assets for this version."
   },
   "updatePrompt": {
     "title": "Do you want to update the app now?",
@@ -76,6 +82,7 @@
     "browserNotFound": "The selected browser could not be found on this PC.",
     "invalidUrl": "Please enter a valid Google Slides URL.",
     "captureFailed": "Failed to capture slides. Please make sure the slide is accessible.",
-    "selectDownloadMode": "Select at least one download mode."
+    "selectDownloadMode": "Select at least one download mode.",
+    "transferFailed": "Transfer failed: {error}"
   }
 }

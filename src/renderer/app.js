@@ -12,6 +12,11 @@ function getSettings() {
   return settings;
 }
 
+const appVersionElement = document.getElementById('app-version');
+if (appVersionElement && window.api?.appVersion) {
+  appVersionElement.textContent = `v${window.api.appVersion}`;
+}
+
 // i18n Loader
 async function loadTranslations(lang) {
   try {
@@ -221,6 +226,7 @@ window.api.onCaptureComplete((data) => {
   urlError.textContent = '';
   loadingTitle.textContent = t('status.complete');
   loadingStatus.textContent = t('status.saving');
+  resetDownloadModes();
   showScreen(4);
 });
 
@@ -233,13 +239,50 @@ window.api.onCaptureError((data) => {
 // Screen 4: Directory Selection
 const btnSelectDir = document.getElementById('btn-select-dir');
 const folderNameInput = document.getElementById('folder-name-input');
+const downloadImagesCheckbox = document.getElementById('download-images-checkbox');
+const downloadPdfCheckbox = document.getElementById('download-pdf-checkbox');
+const downloadModeError = document.getElementById('download-mode-error');
 const transferStatus = document.getElementById('transfer-status');
 
 function getFolderName() {
   return folderNameInput.value.trim();
 }
 
+function resetDownloadModes() {
+  downloadImagesCheckbox.checked = false;
+  downloadPdfCheckbox.checked = false;
+  downloadModeError.textContent = t('errors.selectDownloadMode');
+  downloadModeError.classList.add('hidden');
+}
+
+function getSelectedDownloadModes() {
+  return {
+    images: downloadImagesCheckbox.checked,
+    pdf: downloadPdfCheckbox.checked,
+  };
+}
+
+downloadImagesCheckbox.addEventListener('change', () => {
+  if (downloadImagesCheckbox.checked || downloadPdfCheckbox.checked) {
+    downloadModeError.classList.add('hidden');
+  }
+});
+
+downloadPdfCheckbox.addEventListener('change', () => {
+  if (downloadImagesCheckbox.checked || downloadPdfCheckbox.checked) {
+    downloadModeError.classList.add('hidden');
+  }
+});
+
 btnSelectDir.addEventListener('click', async () => {
+  const downloadModes = getSelectedDownloadModes();
+
+  if (!downloadModes.images && !downloadModes.pdf) {
+    downloadModeError.textContent = t('errors.selectDownloadMode');
+    downloadModeError.classList.remove('hidden');
+    return;
+  }
+
   const result = await window.api.selectDirectory();
   
   if (result.path) {
@@ -250,6 +293,8 @@ btnSelectDir.addEventListener('click', async () => {
     const transferResult = await window.api.transferFiles({
       destinationPath: result.path,
       folderName: getFolderName(),
+      downloadImages: downloadModes.images,
+      downloadPdf: downloadModes.pdf,
     });
 
     if (transferResult.success) {

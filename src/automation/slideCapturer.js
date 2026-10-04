@@ -1,4 +1,6 @@
 const path = require('path');
+const fs = require('fs-extra');
+const crypto = require('crypto');
 
 async function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -6,8 +8,6 @@ async function delay(ms) {
 
 async function captureSlides(page, tempFolder, mainWindow) {
   let slideIndex = 1;
-  let hasNextSlide = true;
-  let previousUrl = '';
 
   // Wait for the slide container to be present. In Google Slides presentation mode, 
   // '.punch-viewer-content' or '#slide-stage' is usually the main container for the slides.
@@ -20,7 +20,7 @@ async function captureSlides(page, tempFolder, mainWindow) {
   // Give it an initial moment to fully render
   await delay(2000);
 
-  while (hasNextSlide) {
+  while (true) {
     mainWindow.webContents.send('capture:progress', {
       currentSlide: slideIndex,
       status: 'Capturing screenshot...'
@@ -29,24 +29,25 @@ async function captureSlides(page, tempFolder, mainWindow) {
     const fileName = `slide_${String(slideIndex).padStart(3, '0')}.png`;
     const filePath = path.join(tempFolder, fileName);
 
-    await page.screenshot({ path: filePath, fullPage: false });
-
-    previousUrl = page.url();
+    const currentScreenshot = await page.screenshot({ fullPage: false });
+    await fs.writeFile(filePath, currentScreenshot);
 
     // Advance to next slide
     await page.keyboard.press('ArrowRight');
     
     // Wait for transition animation
-    await delay(1000);
+    await delay(1500);
     
-    const currentUrl = page.url();
-    
-    // If the URL hasn't changed after pressing Right Arrow, we probably reached the end.
-    if (currentUrl === previousUrl) {
-       hasNextSlide = false;
-    } else {
-       slideIndex++;
+    const nextScreenshot = await page.screenshot({ fullPage: false });
+    const currentHash = crypto.createHash('sha1').update(currentScreenshot).digest('hex');
+    const nextHash = crypto.createHash('sha1').update(nextScreenshot).digest('hex');
+
+    // If the rendered slide did not change, we probably reached the end.
+    if (nextHash === currentHash) {
+      break;
     }
+
+    slideIndex++;
   }
 
   mainWindow.webContents.send('capture:complete', {

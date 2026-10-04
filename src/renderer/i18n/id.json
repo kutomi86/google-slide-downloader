@@ -19,8 +19,12 @@
     "btnBack": "Kembali ke Pilih Browser"
   },
   "folderName": {
-    "label": "Nama folder",
-    "placeholder": "GoogleSlide DD/MM/YYYY hh:mm:ss"
+    "label": "Nama folder/file",
+    "placeholder": "GoogleSlide"
+  },
+  "downloadModes": {
+    "images": "Unduh sebagai Gambar",
+    "pdf": "Unduh sebagai PDF"
   },
   "status": {
     "searchingBrowser": "Mencari lokasi browser...",
@@ -71,6 +75,7 @@
   "errors": {
     "browserNotFound": "Browser yang dipilih tidak ditemukan pada perangkat ini.",
     "invalidUrl": "Harap masukkan URL Google Slides yang valid.",
-    "captureFailed": "Gagal merekam slide. Pastikan slide dapat diakses."
+    "captureFailed": "Gagal merekam slide. Pastikan slide dapat diakses.",
+    "selectDownloadMode": "Pilih setidaknya satu mode unduhan."
   }
 }

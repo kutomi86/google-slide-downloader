@@ -19,8 +19,12 @@
     "btnBack": "Back to Browsers"
   },
   "folderName": {
-    "label": "Folder name",
-    "placeholder": "GoogleSlide DD/MM/YYYY hh:mm:ss"
+    "label": "Folder/File name",
+    "placeholder": "GoogleSlide"
+  },
+  "downloadModes": {
+    "images": "Download as Images",
+    "pdf": "Download as PDF"
   },
   "status": {
     "searchingBrowser": "Locating browser instance...",
@@ -71,6 +75,7 @@
   "errors": {
     "browserNotFound": "The selected browser could not be found on this PC.",
     "invalidUrl": "Please enter a valid Google Slides URL.",
-    "captureFailed": "Failed to capture slides. Please make sure the slide is accessible."
+    "captureFailed": "Failed to capture slides. Please make sure the slide is accessible.",
+    "selectDownloadMode": "Select at least one download mode."
   }
 }

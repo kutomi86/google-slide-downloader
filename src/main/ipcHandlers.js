@@ -3,6 +3,7 @@ const { getBrowserPath } = require('./browserDetector');
 const fs = require('fs-extra');
 const path = require('path');
 const os = require('os');
+const { PDFDocument } = require('pdf-lib');
 const { checkForUpdates } = require('./updateChecker');
 
 let currentTempFolder = null;
@@ -12,13 +13,37 @@ function formatDefaultFolderName(date = new Date()) {
   return `GoogleSlide ${pad(date.getDate())}-${pad(date.getMonth() + 1)}-${date.getFullYear()} ${pad(date.getHours())}-${pad(date.getMinutes())}-${pad(date.getSeconds())}`;
 }
 
-function sanitizeFolderName(folderName) {
-  const safeName = path.basename(String(folderName || '').trim())
+function sanitizeNameSegment(value, fallback) {
+  const safeName = path.basename(String(value || '').trim())
     .replace(/[<>:"/\\|?*]+/g, '_')
     .replace(/\s+/g, ' ')
     .replace(/[. ]+$/g, '');
 
-  return safeName || formatDefaultFolderName();
+  return safeName || fallback;
+}
+
+async function createPdfFromImages(imagePaths, outputPath) {
+  const pdfDocument = await PDFDocument.create();
+
+  for (const imagePath of imagePaths) {
+    const imageBytes = await fs.readFile(imagePath);
+    const extension = path.extname(imagePath).toLowerCase();
+    const embeddedImage = extension === '.png'
+      ? await pdfDocument.embedPng(imageBytes)
+      : await pdfDocument.embedJpg(imageBytes);
+    const { width, height } = embeddedImage.scale(1);
+    const page = pdfDocument.addPage([width, height]);
+
+    page.drawImage(embeddedImage, {
+      x: 0,
+      y: 0,
+      width,
+      height,
+    });
+  }
+
+  const pdfBytes = await pdfDocument.save();
+  await fs.writeFile(outputPath, pdfBytes);
 }
 
 function setupIpcHandlers(mainWindow, updateManager) {
@@ -105,24 +130,40 @@ function setupIpcHandlers(mainWindow, updateManager) {
   });
 
   ipcMain.handle('files:transfer', async (event, payload) => {
-    const { destinationPath, folderName } = payload;
+    const { destinationPath, folderName, downloadImages = true, downloadPdf = false } = payload;
     
     try {
       if (!currentTempFolder || !(await fs.pathExists(currentTempFolder))) {
         throw new Error('No temporary capture folder found to transfer.');
       }
 
-      const targetFolderName = sanitizeFolderName(folderName);
+      if (!downloadImages && !downloadPdf) {
+        throw new Error('Select at least one download mode.');
+      }
+
+      const targetFolderName = sanitizeNameSegment(folderName, formatDefaultFolderName());
       const finalDestinationPath = path.join(destinationPath, targetFolderName);
       await fs.ensureDir(finalDestinationPath);
       
-      const files = await fs.readdir(currentTempFolder);
-      
-      // Move each file from temp to destination
-      for (const file of files) {
-        const srcPath = path.join(currentTempFolder, file);
-        const destPath = path.join(finalDestinationPath, file);
-        await fs.move(srcPath, destPath, { overwrite: true });
+      const files = (await fs.readdir(currentTempFolder)).sort();
+      const imageFiles = files.filter((file) => /\.(png|jpe?g)$/i.test(file));
+
+      if (downloadPdf) {
+        if (imageFiles.length === 0) {
+          throw new Error('No captured images found to convert into a PDF.');
+        }
+
+        const pdfFilePath = path.join(finalDestinationPath, `${targetFolderName}.pdf`);
+        const imagePaths = imageFiles.map((file) => path.join(currentTempFolder, file));
+        await createPdfFromImages(imagePaths, pdfFilePath);
+      }
+
+      if (downloadImages) {
+        for (const file of imageFiles) {
+          const srcPath = path.join(currentTempFolder, file);
+          const destPath = path.join(finalDestinationPath, file);
+          await fs.move(srcPath, destPath, { overwrite: true });
+        }
       }
       
       // Cleanup temp folder

@@ -1,6 +1,9 @@
 const { contextBridge, ipcRenderer } = require('electron');
+const { version } = require('../../package.json');
 
 contextBridge.exposeInMainWorld('api', {
+  appVersion: version,
+
   // Renderer -> Main (Invocations)
   checkForUpdates: () => ipcRenderer.invoke('updates:check'),
   downloadUpdate: () => ipcRenderer.invoke('updates:download'),

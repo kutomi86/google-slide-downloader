@@ -70,6 +70,53 @@ async function closeBlankTabs(browser, activePage) {
   }
 }
 
+function normalizePresentationUrl(url) {
+  const parsedUrl = new URL(url);
+  const pathname = parsedUrl.pathname;
+
+  if (pathname.includes('/edit')) {
+    parsedUrl.pathname = pathname.replace(/\/edit.*$/, '/present');
+    parsedUrl.search = '';
+    parsedUrl.hash = '';
+    return parsedUrl.toString();
+  }
+
+  if (pathname.includes('/d/') && !pathname.includes('/present') && !pathname.includes('/pubembed')) {
+    parsedUrl.pathname = pathname.endsWith('/') ? `${pathname}present` : `${pathname}/present`;
+    parsedUrl.search = '';
+    parsedUrl.hash = '';
+    return parsedUrl.toString();
+  }
+
+  if ((pathname.includes('/pub') || pathname.includes('/pubhtml')) && parsedUrl.searchParams.has('slide')) {
+    parsedUrl.searchParams.delete('slide');
+    return parsedUrl.toString();
+  }
+
+  return url;
+}
+
+async function getPresentationAccessError(page) {
+  const pageTitle = (await page.title()).toLowerCase();
+  const bodyText = await page.evaluate(() => document.body ? document.body.innerText.toLowerCase() : '');
+  const combinedText = `${pageTitle}\n${bodyText}`;
+
+  const accessErrorPatterns = [
+    'you need access',
+    'request access',
+    'not found',
+    'file you requested does not exist',
+    'sorry, the file you have requested does not exist',
+    'sorry, unable to open the file',
+  ];
+
+  if (accessErrorPatterns.some((pattern) => combinedText.includes(pattern))) {
+    return 'The current browser profile cannot access this presentation. Please check sharing permissions or sign in with an account that has access.';
+  }
+
+  return null;
+}
+
 async function startCaptureSession(url, browserName, tempFolder, mainWindow) {
   const executablePath = getBrowserPath(browserName);
   
@@ -77,17 +124,7 @@ async function startCaptureSession(url, browserName, tempFolder, mainWindow) {
     throw new Error(`Executable for ${browserName} not found.`);
   }
 
-  // Normalize URL only when we are given an editor link.
-  // Published/embed links should be opened as-is.
-  let presentUrl = url;
-  const parsedUrl = new URL(url);
-  const pathname = parsedUrl.pathname;
-
-  if (pathname.includes('/edit')) {
-    presentUrl = url.replace(/\/edit.*$/, '/present');
-  } else if (pathname.includes('/d/') && !pathname.includes('/present') && !pathname.includes('/pubembed')) {
-    presentUrl = url.endsWith('/') ? `${url}present` : `${url}/present`;
-  }
+  const presentUrl = normalizePresentationUrl(url);
 
   let browser = await connectToExistingBrowser();
   let shouldCloseBrowser = false;
@@ -110,6 +147,11 @@ async function startCaptureSession(url, browserName, tempFolder, mainWindow) {
   } else {
     page = await browser.newPage();
     await page.goto(presentUrl, { waitUntil: 'networkidle2' });
+  }
+
+  const accessError = await getPresentationAccessError(page);
+  if (accessError) {
+    throw new Error(accessError);
   }
 
   if (mainWindow && !mainWindow.isDestroyed()) {

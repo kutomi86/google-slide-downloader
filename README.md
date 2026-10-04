@@ -1,11 +1,11 @@
 # 📊 Google Slides Downloader
 
-A native Electron desktop application that automates the extraction of high-resolution, slide-by-slide screenshots from any accessible Google Slides presentation using powerful `puppeteer-core` browser automation.
+A native Electron desktop application that automates the extraction of high-resolution, slide-by-slide screenshots from any accessible Google Slides presentation using powerful `puppeteer-core` browser automation. **Effortlessly save your presentation as a collection of images in a folder or compile them directly into a PDF document!**
 
 ## ✨ Key Features
 
 - **Multi-Browser Support**: Connects securely to your local installations of Google Chrome, Microsoft Edge, or Brave Browser without bundling a heavy Chromium instance.
-- **Native File Export**: Automatically saves all slides to a temporary workspace and lets you pick the final destination using the native Windows Explorer directory dialog.
+- **Versatile Export (Images or PDF)**: Automatically saves all slides and lets you export them as a **collection of images in a folder** or as a **single PDF**, picking the final destination using the native Windows Explorer directory dialog.
 - **Multi-Theme UI**: Seamlessly switch between **Light (Default)**, **GitHub Dark**, and **Ayu Dark** visual themes in real-time.
 - **Internationalization (i18n)**: Full interface translation support built-in for **English** and **Bahasa Indonesia**.
 - **Keyboard Navigation**: Assign a default browser to bypass the selection screen instantly by pressing `[ENTER]`.
@@ -51,8 +51,27 @@ The application simplifies a complex automation flow into 5 easy steps:
 1. **Browser Selection:** The app auto-detects installed browsers on your Windows machine. Select the one you wish to use (or hit `[ENTER]` if you've set a default).
 2. **URL Input:** Paste the URL of the Google Slides presentation. The app automatically normalizes it into presentation mode.
 3. **Automated Slide Extraction:** The Puppeteer engine hooks into your browser, waits for slides to render, captures high-res screenshots, and uses simulated keyboard inputs (`ArrowRight`) to traverse the entire deck.
-4. **Native Directory Selection:** Once captured, the app opens a native Windows folder picker for you to decide where the images should be saved.
-5. **File Transfer Completion:** The slides are moved safely across your system to the final destination, and temporary artifacts are instantly cleaned up.
+4. **Format & Directory Selection:** Once captured, you can choose to save the output as a collection of images in a folder or as a PDF document. The app then opens a native Windows dialog for you to decide where the files should be saved.
+5. **File Transfer Completion:** The images or PDF are moved safely across your system to the final destination, and temporary artifacts are instantly cleaned up.
+
+---
+
+## ⚠️ Important Usage Guidelines
+
+### 🛑 What NOT to Do During Capture
+When the program is actively extracting slides, it will launch a temporary, automated browser window to view and screenshot the presentation page by page. 
+**During this process, do NOT click, scroll, or interact with the automated browser window.**
+Doing so will interfere with the script's ability to transition slides and capture accurate screenshots, which may result in duplicated, skipped, or misaligned images. Just sit back and let the automation finish!
+
+*(Note: The program is "page-aware", meaning it intelligently tracks the URL slide IDs to ignore duplicate captures caused by slide animations. It will wait and only save the final visual state of each slide. However, manual interference can still disrupt the workflow.)*
+
+### ✅ Troubleshooting: "No Access" Errors
+Sometimes, you might be able to open a Google Slide manually on your computer, but when the program launches its automated browser, it gets an access error (e.g., "You need access" or "File does not exist").
+
+**What to do if this happens:**
+- **Check your Browser Profiles:** The automated script hooks into your browser's default profile environment. Make sure that the browser you selected in the app's browser selector (Chrome, Edge, or Brave) is actively logged into a Google account that has permission to view the slides.
+- **Switch Browsers:** If your primary Google account is on Chrome but you selected Edge in the app, the automated Edge window won't have your Chrome login session. Either select Chrome in the app, or log into your Google account on Edge first.
+- **Link Visibility:** If you are not the owner of the presentation, ask the owner to change the sharing permissions to "Anyone with the link can view" to bypass authentication entirely.
 
 ---
 

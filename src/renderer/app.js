@@ -13,8 +13,10 @@ function getSettings() {
 }
 
 const appVersionElement = document.getElementById('app-version');
-if (appVersionElement && window.api?.appVersion) {
-  appVersionElement.textContent = `v${window.api.appVersion}`;
+if (appVersionElement && window.api?.getAppVersion) {
+  window.api.getAppVersion().then(v => {
+    appVersionElement.textContent = `v${v}`;
+  });
 }
 
 // i18n Loader
@@ -300,7 +302,7 @@ btnSelectDir.addEventListener('click', async () => {
     if (transferResult.success) {
       showScreen(5);
     } else {
-      alert(`Transfer failed: ${transferResult.error}`);
+      alert(t('errors.transferFailed', { error: transferResult.error }));
       btnSelectDir.disabled = false;
       folderNameInput.disabled = false;
       transferStatus.classList.add('hidden');
@@ -364,7 +366,7 @@ async function runUpdateCheck() {
   }
 
   if (result.isNewerVersionAvailable) {
-    const currentVersion = result.currentVersion || window.api.appVersion || '';
+    const currentVersion = result.currentVersion || (await window.api.getAppVersion?.()) || '';
     const nextVersion = result.updateInfo?.version || '';
     updateVersionLine.textContent = `v${currentVersion} -> v${nextVersion}`;
     updateVersionLine.classList.remove('hidden');
@@ -392,7 +394,7 @@ btnUpdateAccept.addEventListener('click', () => {
     if (!result.success) {
       const errorMessage = result.error || t('updateCheck.errorFallback');
       if (/404|cannot download|not found/i.test(errorMessage)) {
-        alert('The update package could not be downloaded. Check that the GitHub release contains the installer and blockmap assets for this version.');
+        alert(t('updateCheck.downloadError'));
       } else {
         alert(errorMessage);
       }
